@@ -1,0 +1,2824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CyberShield AI — Payment Risk Intelligence</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+    --bg:#030303;
+    --bg2:#080808;
+    --panel:rgba(12,12,12,.86);
+    --panel2:#101010;
+
+    --white:#ffffff;
+    --text:#f7f7f7;
+    --muted:#858585;
+
+    --pink:#ff2b8a;
+    --pink2:#ff5cac;
+    --pink-dark:#8e1450;
+
+    --green:#55ff9a;
+    --yellow:#ffd166;
+    --red:#ff405d;
+
+    --border:rgba(255,255,255,.09);
+    --pink-border:rgba(255,43,138,.28);
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    min-height:100vh;
+    overflow-x:hidden;
+    background:
+        radial-gradient(circle at 15% 10%,rgba(255,43,138,.09),transparent 28%),
+        radial-gradient(circle at 85% 80%,rgba(255,43,138,.06),transparent 25%),
+        #030303;
+    color:var(--text);
+    font-family:Inter,Segoe UI,Arial,sans-serif;
+}
+
+/* =========================
+   BACKGROUND
+========================= */
+
+#particles{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:0;
+    pointer-events:none;
+    opacity:.7;
+}
+
+.cyber-grid{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+
+    background-image:
+        linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,43,138,.025) 1px,transparent 1px);
+
+    background-size:55px 55px;
+
+    mask-image:linear-gradient(
+        to bottom,
+        black,
+        transparent 90%
+    );
+
+    animation:gridMove 18s linear infinite;
+}
+
+@keyframes gridMove{
+    from{background-position:0 0;}
+    to{background-position:55px 55px;}
+}
+
+.scanlines{
+    position:fixed;
+    inset:0;
+    z-index:50;
+    pointer-events:none;
+
+    background:repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 3px,
+        rgba(255,255,255,.012) 4px
+    );
+
+    opacity:.45;
+}
+
+.ambient{
+    position:fixed;
+    width:420px;
+    height:420px;
+    border-radius:50%;
+    filter:blur(110px);
+    pointer-events:none;
+    z-index:0;
+    opacity:.13;
+}
+
+.ambient.one{
+    background:var(--pink);
+    top:-160px;
+    left:-140px;
+    animation:floatOne 8s ease-in-out infinite alternate;
+}
+
+.ambient.two{
+    background:#ffffff;
+    right:-220px;
+    top:25%;
+    opacity:.045;
+    animation:floatTwo 10s ease-in-out infinite alternate;
+}
+
+.ambient.three{
+    background:var(--pink);
+    bottom:-200px;
+    left:35%;
+    opacity:.08;
+    animation:floatThree 12s ease-in-out infinite alternate;
+}
+
+@keyframes floatOne{
+    to{
+        transform:translate(100px,80px) scale(1.2);
+    }
+}
+
+@keyframes floatTwo{
+    to{
+        transform:translate(-90px,70px) scale(1.15);
+    }
+}
+
+@keyframes floatThree{
+    to{
+        transform:translate(80px,-80px) scale(1.1);
+    }
+}
+
+/* =========================
+   APP
+========================= */
+
+.app{
+    position:relative;
+    z-index:2;
+    width:min(1450px,94%);
+    margin:auto;
+    padding:25px 0 45px;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+header{
+    height:72px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    border:1px solid var(--border);
+    border-radius:18px;
+
+    padding:0 22px;
+
+    background:rgba(5,5,5,.82);
+    backdrop-filter:blur(18px);
+
+    box-shadow:
+        0 20px 70px rgba(0,0,0,.45),
+        inset 0 0 30px rgba(255,43,138,.025);
+
+    position:relative;
+    overflow:hidden;
+}
+
+header::after{
+    content:"";
+    position:absolute;
+    left:0;
+    bottom:0;
+    height:1px;
+    width:100%;
+
+    background:linear-gradient(
+        90deg,
+        transparent,
+        var(--pink),
+        transparent
+    );
+
+    animation:headerScan 3s linear infinite;
+}
+
+@keyframes headerScan{
+    0%{transform:translateX(-100%);}
+    100%{transform:translateX(100%);}
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:13px;
+}
+
+.brand-icon{
+    width:42px;
+    height:42px;
+
+    display:grid;
+    place-items:center;
+
+    border-radius:12px;
+
+    background:
+        linear-gradient(145deg,#171717,#050505);
+
+    border:1px solid var(--pink-border);
+
+    color:var(--pink);
+
+    font-size:21px;
+
+    box-shadow:
+        0 0 25px rgba(255,43,138,.15),
+        inset 0 0 15px rgba(255,43,138,.06);
+
+    animation:iconPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes iconPulse{
+    0%,100%{
+        box-shadow:0 0 18px rgba(255,43,138,.12);
+    }
+
+    50%{
+        box-shadow:0 0 32px rgba(255,43,138,.32);
+    }
+}
+
+.brand h2{
+    font-size:17px;
+    letter-spacing:.5px;
+}
+
+.brand span{
+    color:var(--pink);
+}
+
+.status{
+    display:flex;
+    align-items:center;
+    gap:9px;
+
+    color:#cfcfcf;
+    font-size:12px;
+
+    font-family:Consolas,monospace;
+}
+
+.status-dot{
+    width:8px;
+    height:8px;
+    background:var(--pink);
+    border-radius:50%;
+
+    box-shadow:0 0 12px var(--pink);
+
+    animation:statusBlink 1.2s infinite;
+}
+
+@keyframes statusBlink{
+    50%{
+        opacity:.25;
+        transform:scale(.65);
+    }
+}
+
+/* =========================
+   HERO
+========================= */
+
+.hero{
+    padding:70px 10px 45px;
+    text-align:center;
+}
+
+.hero-label{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+
+    padding:7px 13px;
+
+    border:1px solid rgba(255,43,138,.25);
+    border-radius:999px;
+
+    background:rgba(255,43,138,.045);
+
+    color:#cfcfcf;
+
+    font-size:11px;
+    font-family:Consolas,monospace;
+    letter-spacing:1.5px;
+
+    animation:fadeUp .8s ease both;
+}
+
+.hero-label b{
+    color:var(--pink);
+}
+
+.hero h1{
+    margin-top:22px;
+
+    font-size:clamp(40px,6vw,76px);
+    line-height:1;
+
+    letter-spacing:-3px;
+
+    color:#fff;
+
+    animation:fadeUp .9s .1s ease both;
+}
+
+.hero h1 span{
+    color:var(--pink);
+
+    text-shadow:
+        0 0 20px rgba(255,43,138,.35),
+        0 0 55px rgba(255,43,138,.16);
+
+    animation:textGlow 3s ease-in-out infinite;
+}
+
+@keyframes textGlow{
+    50%{
+        text-shadow:
+            0 0 28px rgba(255,43,138,.6),
+            0 0 70px rgba(255,43,138,.22);
+    }
+}
+
+.hero p{
+    max-width:720px;
+    margin:20px auto 0;
+
+    color:var(--muted);
+    line-height:1.7;
+    font-size:15px;
+
+    animation:fadeUp 1s .2s ease both;
+}
+
+@keyframes fadeUp{
+    from{
+        opacity:0;
+        transform:translateY(20px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* =========================
+   TERMINAL BAR
+========================= */
+
+.terminal{
+    max-width:900px;
+    margin:0 auto 40px;
+
+    border:1px solid var(--border);
+    background:#050505;
+
+    border-radius:13px;
+
+    padding:13px 17px;
+
+    font-family:Consolas,monospace;
+    font-size:12px;
+
+    color:#8b8b8b;
+
+    box-shadow:
+        0 15px 50px rgba(0,0,0,.4),
+        inset 0 0 25px rgba(255,255,255,.015);
+
+    animation:fadeUp 1s .3s ease both;
+}
+
+.terminal strong{
+    color:var(--pink);
+}
+
+.cursor{
+    display:inline-block;
+    width:7px;
+    height:14px;
+    background:var(--pink);
+    vertical-align:middle;
+    margin-left:4px;
+
+    animation:cursorBlink .8s infinite;
+}
+
+@keyframes cursorBlink{
+    50%{opacity:0;}
+}
+
+/* =========================
+   MAIN GRID
+========================= */
+
+.main-grid{
+    display:grid;
+    grid-template-columns:390px 1fr;
+    gap:22px;
+    align-items:start;
+}
+
+/* =========================
+   PANELS
+========================= */
+
+.panel,
+.risk-card,
+.explanation{
+    position:relative;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(18,18,18,.94),
+            rgba(6,6,6,.94)
+        );
+
+    border:1px solid var(--border);
+    border-radius:18px;
+
+    box-shadow:
+        0 25px 80px rgba(0,0,0,.35),
+        inset 0 1px 0 rgba(255,255,255,.025);
+
+    overflow:hidden;
+}
+
+.panel::before,
+.risk-card::before,
+.explanation::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+
+    width:55px;
+    height:2px;
+
+    background:var(--pink);
+
+    box-shadow:0 0 18px rgba(255,43,138,.5);
+
+    animation:cornerPulse 3s ease-in-out infinite;
+}
+
+@keyframes cornerPulse{
+    50%{
+        width:110px;
+        opacity:.45;
+    }
+}
+
+.panel::after,
+.risk-card::after,
+.explanation::after{
+    content:"";
+    position:absolute;
+    right:0;
+    bottom:0;
+
+    width:45px;
+    height:2px;
+
+    background:#fff;
+    opacity:.16;
+}
+
+.panel{
+    padding:23px;
+}
+
+.panel-title{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:20px;
+}
+
+.panel-title h3{
+    font-size:15px;
+}
+
+.panel-title span{
+    color:#696969;
+
+    font-size:10px;
+    font-family:Consolas,monospace;
+}
+
+/* =========================
+   FORM
+========================= */
+
+.form-group{
+    margin-bottom:16px;
+}
+
+.form-group label{
+    display:block;
+
+    margin-bottom:8px;
+
+    color:#8b8b8b;
+
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+}
+
+input,
+textarea,
+select{
+    width:100%;
+
+    border:1px solid #202020;
+    border-radius:10px;
+
+    background:#080808;
+    color:#f5f5f5;
+
+    padding:12px 13px;
+
+    outline:none;
+
+    font-size:13px;
+
+    transition:.25s;
+}
+
+textarea{
+    min-height:80px;
+    resize:vertical;
+}
+
+input:focus,
+textarea:focus,
+select:focus{
+    border-color:rgba(255,43,138,.65);
+
+    box-shadow:
+        0 0 0 3px rgba(255,43,138,.07),
+        0 0 25px rgba(255,43,138,.08);
+}
+
+.scenarios{
+    display:flex;
+    gap:8px;
+    margin-bottom:18px;
+}
+
+.scenario{
+    flex:1;
+
+    padding:10px;
+
+    border-radius:9px;
+
+    border:1px solid #202020;
+
+    background:#080808;
+
+    color:#777;
+
+    cursor:pointer;
+
+    font-size:11px;
+
+    transition:.25s;
+}
+
+.scenario:hover{
+    border-color:#444;
+    color:#fff;
+}
+
+.scenario.active{
+    color:#fff;
+
+    border-color:var(--pink);
+
+    background:rgba(255,43,138,.07);
+
+    box-shadow:
+        0 0 22px rgba(255,43,138,.1);
+}
+
+.analyze-btn{
+    position:relative;
+
+    width:100%;
+
+    border:none;
+    border-radius:11px;
+
+    padding:15px;
+
+    background:
+        linear-gradient(
+            100deg,
+            #ff1f83,
+            #ff4da3
+        );
+
+    color:white;
+
+    font-weight:800;
+
+    letter-spacing:.5px;
+
+    cursor:pointer;
+
+    overflow:hidden;
+
+    box-shadow:
+        0 10px 30px rgba(255,43,138,.18);
+
+    transition:.25s;
+}
+
+.analyze-btn::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-120%;
+
+    width:70%;
+    height:100%;
+
+    background:linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,.3),
+        transparent
+    );
+
+    transform:skewX(-20deg);
+
+    animation:buttonSweep 3s infinite;
+}
+
+@keyframes buttonSweep{
+    0%{left:-120%;}
+    45%,100%{left:140%;}
+}
+
+.analyze-btn:hover{
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 15px 45px rgba(255,43,138,.3);
+}
+
+.analyze-btn:active{
+    transform:scale(.98);
+}
+
+/* =========================
+   RESULTS
+========================= */
+
+.result-area{
+    display:grid;
+    gap:20px;
+}
+
+.risk-card{
+    padding:28px;
+
+    display:grid;
+    grid-template-columns:190px 1fr;
+    gap:28px;
+
+    align-items:center;
+}
+
+.risk-ring{
+    width:170px;
+    height:170px;
+
+    border-radius:50%;
+
+    display:grid;
+    place-items:center;
+
+    margin:auto;
+
+    background:
+        conic-gradient(
+            var(--pink) 0deg,
+            var(--pink) 0deg,
+            #161616 0deg
+        );
+
+    position:relative;
+
+    transition:1s cubic-bezier(.17,.67,.28,1);
+
+    box-shadow:
+        0 0 35px rgba(255,43,138,.12);
+}
+
+.risk-ring::before{
+    content:"";
+
+    position:absolute;
+    inset:10px;
+
+    background:#070707;
+
+    border-radius:50%;
+
+    box-shadow:
+        inset 0 0 30px rgba(255,255,255,.025);
+}
+
+.risk-score{
+    position:relative;
+    z-index:2;
+
+    text-align:center;
+}
+
+.risk-score strong{
+    display:block;
+
+    font-size:43px;
+
+    font-family:Consolas,monospace;
+}
+
+.risk-score span{
+    color:#777;
+    font-size:10px;
+    letter-spacing:1px;
+}
+
+.risk-info .eyebrow{
+    color:var(--pink);
+
+    font-size:10px;
+    font-family:Consolas,monospace;
+    letter-spacing:2px;
+}
+
+.risk-info h2{
+    margin:7px 0;
+
+    font-size:28px;
+}
+
+.risk-info p{
+    color:#8b8b8b;
+    line-height:1.6;
+    font-size:13px;
+}
+
+.risk-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+
+    margin-top:17px;
+}
+
+.meta{
+    padding:7px 10px;
+
+    border:1px solid #222;
+    border-radius:8px;
+
+    background:#090909;
+
+    color:#999;
+
+    font-size:10px;
+    font-family:Consolas,monospace;
+}
+
+.meta b{
+    color:#fff;
+}
+
+/* =========================
+   PIPELINE
+========================= */
+
+.pipeline{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+}
+
+.pipe{
+    position:relative;
+
+    padding:15px 10px;
+
+    text-align:center;
+
+    border:1px solid #1e1e1e;
+    border-radius:10px;
+
+    background:#090909;
+
+    overflow:hidden;
+
+    transition:.3s;
+}
+
+.pipe:hover{
+    border-color:rgba(255,43,138,.45);
+    transform:translateY(-3px);
+}
+
+.pipe::after{
+    content:"";
+
+    position:absolute;
+    left:0;
+    bottom:0;
+
+    width:100%;
+    height:2px;
+
+    background:var(--pink);
+
+    transform:scaleX(0);
+    transform-origin:left;
+
+    transition:.3s;
+}
+
+.pipe:hover::after{
+    transform:scaleX(1);
+}
+
+.pipe-icon{
+    color:var(--pink);
+    font-size:18px;
+    margin-bottom:8px;
+}
+
+.pipe strong{
+    display:block;
+    font-size:11px;
+}
+
+.pipe span{
+    color:#666;
+    font-size:9px;
+}
+
+/* =========================
+   METRICS
+========================= */
+
+.metrics{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+}
+
+.metric{
+    padding:17px;
+
+    border:1px solid #1c1c1c;
+    border-radius:12px;
+
+    background:#080808;
+
+    transition:.3s;
+}
+
+.metric:hover{
+    transform:translateY(-4px);
+
+    border-color:rgba(255,43,138,.3);
+
+    box-shadow:
+        0 15px 35px rgba(0,0,0,.3);
+}
+
+.metric small{
+    display:block;
+
+    color:#6c6c6c;
+
+    font-size:10px;
+    margin-bottom:7px;
+}
+
+.metric strong{
+    font-family:Consolas,monospace;
+    font-size:22px;
+}
+
+.metric strong.pink{
+    color:var(--pink);
+}
+
+/* =========================
+   SIGNALS
+========================= */
+
+.signals{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+}
+
+.signal{
+    position:relative;
+
+    padding:14px;
+
+    background:#080808;
+
+    border:1px solid #1d1d1d;
+    border-radius:11px;
+
+    overflow:hidden;
+
+    transition:.3s;
+}
+
+.signal:hover{
+    transform:translateY(-3px);
+    border-color:#333;
+}
+
+.signal::before{
+    content:"";
+
+    position:absolute;
+    left:0;
+    top:0;
+    bottom:0;
+
+    width:2px;
+
+    background:#333;
+
+    transition:.3s;
+}
+
+.signal.active::before{
+    background:var(--pink);
+    box-shadow:0 0 15px var(--pink);
+}
+
+.signal-name{
+    color:#777;
+    font-size:9px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+}
+
+.signal-value{
+    margin-top:7px;
+
+    font-family:Consolas,monospace;
+
+    font-size:12px;
+
+    color:#ddd;
+}
+
+.signal.active{
+    animation:signalPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes signalPulse{
+    50%{
+        box-shadow:inset 8px 0 25px rgba(255,43,138,.035);
+    }
+}
+
+/* =========================
+   GRAPH
+========================= */
+
+.graph-wrap{
+    height:300px;
+    position:relative;
+    overflow:hidden;
+
+    border:1px solid #181818;
+    border-radius:12px;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(255,43,138,.035),
+            transparent 55%
+        ),
+        #060606;
+}
+
+.graph-wrap::after{
+    content:"NETWORK TELEMETRY";
+
+    position:absolute;
+    top:12px;
+    right:14px;
+
+    color:#333;
+
+    font-family:Consolas,monospace;
+    font-size:9px;
+}
+
+.graph-wrap svg{
+    width:100%;
+    height:100%;
+}
+
+.graph-line{
+    stroke:#2b2b2b;
+    stroke-width:2;
+
+    stroke-dasharray:8 8;
+
+    animation:dashMove 2s linear infinite;
+}
+
+@keyframes dashMove{
+    to{
+        stroke-dashoffset:-32;
+    }
+}
+
+.graph-node{
+    animation:nodePulse 2.4s ease-in-out infinite;
+}
+
+@keyframes nodePulse{
+    50%{
+        filter:
+            drop-shadow(
+                0 0 8px rgba(255,43,138,.65)
+            );
+    }
+}
+
+/* =========================
+   EXPLANATION
+========================= */
+
+.explanation{
+    padding:24px;
+
+    border-color:rgba(255,43,138,.18);
+}
+
+.ai-label{
+    display:flex;
+    align-items:center;
+    gap:8px;
+
+    color:var(--pink);
+
+    font-family:Consolas,monospace;
+    font-size:10px;
+    letter-spacing:1.5px;
+
+    margin-bottom:13px;
+}
+
+.ai-dot{
+    width:7px;
+    height:7px;
+
+    background:var(--pink);
+
+    border-radius:50%;
+
+    box-shadow:0 0 10px var(--pink);
+
+    animation:statusBlink 1s infinite;
+}
+
+#explanationText{
+    color:#b0b0b0;
+
+    line-height:1.75;
+
+    font-size:13px;
+}
+
+.typing-cursor{
+    display:inline-block;
+
+    width:6px;
+    height:14px;
+
+    background:var(--pink);
+
+    margin-left:3px;
+
+    vertical-align:-2px;
+
+    animation:cursorBlink .8s infinite;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+footer{
+    padding:30px 5px 0;
+
+    display:flex;
+    justify-content:space-between;
+
+    color:#4e4e4e;
+
+    font-size:10px;
+    font-family:Consolas,monospace;
+}
+
+footer span{
+    color:var(--pink);
+}
+
+/* =========================
+   LOADING
+========================= */
+
+.loading{
+    pointer-events:none;
+    opacity:.7;
+}
+
+.loading .analyze-btn{
+    filter:saturate(.7);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:1050px){
+
+    .main-grid{
+        grid-template-columns:1fr;
+    }
+
+    .pipeline{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .signals{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:700px){
+
+    .app{
+        width:92%;
+        padding-top:14px;
+    }
+
+    header{
+        height:62px;
+        padding:0 14px;
+    }
+
+    .brand h2{
+        font-size:14px;
+    }
+
+    .status{
+        font-size:9px;
+    }
+
+    .hero{
+        padding:55px 5px 35px;
+    }
+
+    .hero h1{
+        font-size:43px;
+        letter-spacing:-2px;
+    }
+
+    .risk-card{
+        grid-template-columns:1fr;
+        text-align:center;
+    }
+
+    .risk-meta{
+        justify-content:center;
+    }
+
+    .metrics{
+        grid-template-columns:1fr;
+    }
+
+    .signals{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .terminal{
+        font-size:9px;
+        overflow:hidden;
+        white-space:nowrap;
+    }
+
+    footer{
+        flex-direction:column;
+        gap:8px;
+    }
+}
+
+@media(max-width:430px){
+
+    .signals{
+        grid-template-columns:1fr;
+    }
+
+    .pipeline{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .panel{
+        padding:18px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="particles"></canvas>
+
+<div class="cyber-grid"></div>
+<div class="scanlines"></div>
+
+<div class="ambient one"></div>
+<div class="ambient two"></div>
+<div class="ambient three"></div>
+
+<div class="app">
+
+<!-- ================= HEADER ================= -->
+
+<header>
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            ◈
+        </div>
+
+        <div>
+            <h2>CyberShield <span>AI</span></h2>
+        </div>
+
+    </div>
+
+    <div class="status">
+        <div class="status-dot"></div>
+        RISK ENGINE ONLINE
+    </div>
+
+</header>
+
+
+<!-- ================= HERO ================= -->
+
+<section class="hero">
+
+    <div class="hero-label">
+        <b>●</b>
+        PAYMENT INTELLIGENCE // DEFENSE MODE
+    </div>
+
+    <h1>
+        Detect the risk<br>
+        behind <span>every payment.</span>
+    </h1>
+
+    <p>
+        CyberShield analyzes transaction behavior, recipient history,
+        devices, locations, messages, QR requests and connected accounts
+        to explain risk before money moves.
+    </p>
+
+</section>
+
+
+<!-- ================= TERMINAL ================= -->
+
+<div class="terminal">
+    <strong>&gt;</strong>
+    cybershield --scan payment --mode behavioral+graph
+    <span class="cursor"></span>
+</div>
+
+
+<!-- ================= MAIN ================= -->
+
+<div class="main-grid">
+
+
+<!-- ================= INPUT ================= -->
+
+<section class="panel">
+
+    <div class="panel-title">
+
+        <h3>Transaction Input</h3>
+
+        <span>INPUT_NODE // 07</span>
+
+    </div>
+
+
+    <div class="scenarios">
+
+        <button
+            class="scenario active"
+            onclick="loadScenario('normal',this)"
+        >
+            NORMAL
+        </button>
+
+        <button
+            class="scenario"
+            onclick="loadScenario('suspicious',this)"
+        >
+            SUSPICIOUS
+        </button>
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label>User ID</label>
+
+        <input
+            id="user_id"
+            type="text"
+            value="user_001"
+        >
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label>Amount</label>
+
+        <input
+            id="amount"
+            type="number"
+            value="1000"
+        >
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label>Recipient</label>
+
+        <input
+            id="recipient"
+            type="text"
+            value="merchant_101"
+        >
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label>Device</label>
+
+        <input
+            id="device"
+            type="text"
+            value="device_A"
+        >
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label>Location</label>
+
+        <input
+            id="location"
+            type="text"
+            value="Ludhiana"
+        >
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label>Timestamp</label>
+
+        <input
+            id="timestamp"
+            type="text"
+            value="2026-09-20 01:00:00"
+        >
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label>Payment Message</label>
+
+        <textarea id="message">Payment for groceries</textarea>
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label>QR Recipient</label>
+
+        <input
+            id="qr_recipient"
+            type="text"
+            value="merchant101@upi"
+        >
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label>QR Amount</label>
+
+        <input
+            id="qr_amount"
+            type="number"
+            value="1000"
+        >
+
+    </div>
+
+
+    <button
+        class="analyze-btn"
+        id="analyzeBtn"
+        onclick="analyzeTransaction()"
+    >
+        RUN THREAT SCAN →
+    </button>
+
+</section>
+
+
+<!-- ================= RESULTS ================= -->
+
+<main class="result-area">
+
+
+<!-- RISK CARD -->
+
+<section
+    id="riskCard"
+    class="risk-card"
+>
+
+    <div class="risk-ring" id="riskRing">
+
+        <div class="risk-score">
+
+            <strong id="riskScore">
+                0
+            </strong>
+
+            <span>
+                RISK SCORE
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="risk-info">
+
+        <div class="eyebrow">
+            THREAT ASSESSMENT
+        </div>
+
+        <h2 id="riskLevel">
+            WAITING
+        </h2>
+
+        <p id="riskAction">
+            Run a transaction analysis to evaluate payment risk.
+        </p>
+
+
+        <div class="risk-meta">
+
+            <div class="meta">
+                ENGINE <b>v2.4</b>
+            </div>
+
+            <div class="meta">
+                MODE <b>BEHAVIORAL</b>
+            </div>
+
+            <div class="meta">
+                GRAPH <b>ACTIVE</b>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- PIPELINE -->
+
+<section class="panel">
+
+    <div class="panel-title">
+
+        <h3>Risk Analysis Pipeline</h3>
+
+        <span>LIVE PROCESS</span>
+
+    </div>
+
+
+    <div class="pipeline">
+
+        <div class="pipe">
+
+            <div class="pipe-icon">01</div>
+
+            <strong>TRANSACTION</strong>
+
+            <span>Capture</span>
+
+        </div>
+
+
+        <div class="pipe">
+
+            <div class="pipe-icon">02</div>
+
+            <strong>BEHAVIOR</strong>
+
+            <span>Compare</span>
+
+        </div>
+
+
+        <div class="pipe">
+
+            <div class="pipe-icon">03</div>
+
+            <strong>GRAPH</strong>
+
+            <span>Connect</span>
+
+        </div>
+
+
+        <div class="pipe">
+
+            <div class="pipe-icon">04</div>
+
+            <strong>ACTION</strong>
+
+            <span>Protect</span>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- METRICS -->
+
+<section class="panel">
+
+    <div class="panel-title">
+
+        <h3>Intelligence Metrics</h3>
+
+        <span>REAL-TIME</span>
+
+    </div>
+
+
+    <div class="metrics">
+
+        <div class="metric">
+
+            <small>BEHAVIORAL RISK</small>
+
+            <strong
+                id="behavioralRisk"
+                class="pink"
+            >
+                0
+            </strong>
+
+        </div>
+
+
+        <div class="metric">
+
+            <small>GRAPH RISK</small>
+
+            <strong
+                id="graphRisk"
+                class="pink"
+            >
+                0
+            </strong>
+
+        </div>
+
+
+        <div class="metric">
+
+            <small>STRONG SIGNALS</small>
+
+            <strong id="strongSignals">
+                0
+            </strong>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- SIGNALS -->
+
+<section class="panel">
+
+    <div class="panel-title">
+
+        <h3>Risk Signals</h3>
+
+        <span>SIGNAL MATRIX</span>
+
+    </div>
+
+
+    <div class="signals">
+
+        <div
+            class="signal"
+            id="signalAmount"
+        >
+
+            <div class="signal-name">
+                Amount
+            </div>
+
+            <div
+                class="signal-value"
+                id="amountSignal"
+            >
+                —
+            </div>
+
+        </div>
+
+
+        <div
+            class="signal"
+            id="signalRecipient"
+        >
+
+            <div class="signal-name">
+                Recipient
+            </div>
+
+            <div
+                class="signal-value"
+                id="recipientSignal"
+            >
+                —
+            </div>
+
+        </div>
+
+
+        <div
+            class="signal"
+            id="signalDevice"
+        >
+
+            <div class="signal-name">
+                Device
+            </div>
+
+            <div
+                class="signal-value"
+                id="deviceSignal"
+            >
+                —
+            </div>
+
+        </div>
+
+
+        <div
+            class="signal"
+            id="signalLocation"
+        >
+
+            <div class="signal-name">
+                Location
+            </div>
+
+            <div
+                class="signal-value"
+                id="locationSignal"
+            >
+                —
+            </div>
+
+        </div>
+
+
+        <div
+            class="signal"
+            id="signalMessage"
+        >
+
+            <div class="signal-name">
+                Message
+            </div>
+
+            <div
+                class="signal-value"
+                id="messageSignal"
+            >
+                —
+            </div>
+
+        </div>
+
+
+        <div
+            class="signal"
+            id="signalQR"
+        >
+
+            <div class="signal-name">
+                QR
+            </div>
+
+            <div
+                class="signal-value"
+                id="qrSignal"
+            >
+                —
+            </div>
+
+        </div>
+
+
+        <div
+            class="signal"
+            id="signalFrequency"
+        >
+
+            <div class="signal-name">
+                Frequency
+            </div>
+
+            <div
+                class="signal-value"
+                id="frequencySignal"
+            >
+                —
+            </div>
+
+        </div>
+
+
+        <div class="signal">
+
+            <div class="signal-name">
+                Engine
+            </div>
+
+            <div class="signal-value">
+                ACTIVE
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- GRAPH -->
+
+<section class="panel">
+
+    <div class="panel-title">
+
+        <h3>Live Fraud Graph</h3>
+
+        <span>NETWORK ANALYSIS</span>
+
+    </div>
+
+
+    <div class="graph-wrap">
+
+        <svg
+            viewBox="0 0 700 300"
+            id="fraudGraph"
+        >
+
+            <line
+                x1="350"
+                y1="150"
+                x2="170"
+                y2="90"
+                class="graph-line"
+            />
+
+            <line
+                x1="350"
+                y1="150"
+                x2="530"
+                y2="90"
+                class="graph-line"
+            />
+
+            <line
+                x1="350"
+                y1="150"
+                x2="180"
+                y2="225"
+                class="graph-line"
+            />
+
+            <line
+                x1="350"
+                y1="150"
+                x2="525"
+                y2="225"
+                class="graph-line"
+            />
+
+
+            <!-- CENTER -->
+
+            <circle
+                cx="350"
+                cy="150"
+                r="34"
+                fill="#0a0a0a"
+                stroke="#ff2b8a"
+                stroke-width="2"
+                class="graph-node"
+            />
+
+            <text
+                x="350"
+                y="147"
+                text-anchor="middle"
+                fill="#ff2b8a"
+                font-size="11"
+                font-family="monospace"
+            >
+                USER
+            </text>
+
+            <text
+                x="350"
+                y="162"
+                text-anchor="middle"
+                fill="#777"
+                font-size="9"
+                font-family="monospace"
+            >
+                001
+            </text>
+
+
+            <!-- NODE 1 -->
+
+            <circle
+                cx="170"
+                cy="90"
+                r="24"
+                fill="#0a0a0a"
+                stroke="#fff"
+                stroke-width="1"
+                class="graph-node"
+            />
+
+            <text
+                x="170"
+                y="94"
+                text-anchor="middle"
+                fill="#aaa"
+                font-size="9"
+                font-family="monospace"
+            >
+                USER 002
+            </text>
+
+
+            <!-- NODE 2 -->
+
+            <circle
+                cx="530"
+                cy="90"
+                r="24"
+                fill="#0a0a0a"
+                stroke="#ff2b8a"
+                stroke-width="1"
+                class="graph-node"
+            />
+
+            <text
+                x="530"
+                y="94"
+                text-anchor="middle"
+                fill="#ff5cac"
+                font-size="9"
+                font-family="monospace"
+            >
+                USER 003
+            </text>
+
+
+            <!-- DEVICE -->
+
+            <circle
+                cx="180"
+                cy="225"
+                r="24"
+                fill="#0a0a0a"
+                stroke="#fff"
+                stroke-width="1"
+                class="graph-node"
+            />
+
+            <text
+                x="180"
+                y="229"
+                text-anchor="middle"
+                fill="#aaa"
+                font-size="9"
+                font-family="monospace"
+            >
+                DEVICE
+            </text>
+
+
+            <!-- MERCHANT -->
+
+            <circle
+                cx="525"
+                cy="225"
+                r="24"
+                fill="#0a0a0a"
+                stroke="#ff2b8a"
+                stroke-width="1"
+                class="graph-node"
+            />
+
+            <text
+                x="525"
+                y="229"
+                text-anchor="middle"
+                fill="#ff5cac"
+                font-size="9"
+                font-family="monospace"
+            >
+                MERCHANT
+            </text>
+
+        </svg>
+
+    </div>
+
+</section>
+
+
+<!-- AI EXPLANATION -->
+
+<section class="explanation">
+
+    <div class="ai-label">
+
+        <div class="ai-dot"></div>
+
+        AI RISK EXPLANATION
+
+    </div>
+
+
+    <div id="explanationText">
+        Waiting for transaction analysis...
+        <span class="typing-cursor"></span>
+    </div>
+
+</section>
+
+
+</main>
+
+</div>
+
+
+<footer>
+
+    <div>
+        CYBERSHIELD AI // PAYMENT DEFENSE SYSTEM
+    </div>
+
+    <div>
+        STATUS: <span>PROTECTED</span>
+    </div>
+
+</footer>
+
+</div>
+
+
+<script>
+
+/* =========================================
+   PARTICLE SYSTEM
+========================================= */
+
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+
+let particles = [];
+
+function resizeCanvas(){
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+}
+
+resizeCanvas();
+
+window.addEventListener("resize",resizeCanvas);
+
+
+function createParticles(){
+
+    particles = [];
+
+    const count = Math.min(
+        110,
+        Math.floor(window.innerWidth / 11)
+    );
+
+    for(let i=0;i<count;i++){
+
+        particles.push({
+
+            x:Math.random()*canvas.width,
+
+            y:Math.random()*canvas.height,
+
+            size:Math.random()*1.6+.3,
+
+            speedX:(Math.random()-.5)*.25,
+
+            speedY:(Math.random()-.5)*.25,
+
+            opacity:Math.random()*.45+.08
+
+        });
+
+    }
+
+}
+
+createParticles();
+
+
+function animateParticles(){
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    particles.forEach(p=>{
+
+        p.x += p.speedX;
+        p.y += p.speedY;
+
+        if(p.x<0) p.x=canvas.width;
+        if(p.x>canvas.width) p.x=0;
+
+        if(p.y<0) p.y=canvas.height;
+        if(p.y>canvas.height) p.y=0;
+
+        ctx.beginPath();
+
+        ctx.arc(
+            p.x,
+            p.y,
+            p.size,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fillStyle =
+            Math.random()>.45
+            ? `rgba(255,43,138,${p.opacity})`
+            : `rgba(255,255,255,${p.opacity*.65})`;
+
+        ctx.fill();
+
+    });
+
+    requestAnimationFrame(animateParticles);
+
+}
+
+animateParticles();
+
+
+/* =========================================
+   SCENARIOS
+========================================= */
+
+const scenarios = {
+
+    normal:{
+
+        user_id:"user_001",
+
+        amount:1000,
+
+        recipient:"merchant_101",
+
+        device:"device_A",
+
+        location:"Ludhiana",
+
+        timestamp:"2026-09-20 01:00:00",
+
+        message:"Payment for groceries",
+
+        qr_recipient:"merchant101@upi",
+
+        qr_amount:1000
+
+    },
+
+
+    suspicious:{
+
+        user_id:"user_001",
+
+        amount:7500,
+
+        recipient:"merchant_attack",
+
+        device:"device_UNKNOWN",
+
+        location:"Mumbai",
+
+        timestamp:"2026-09-20 01:05:00",
+
+        message:
+            "URGENT! Verify your account immediately or it will be blocked.",
+
+        qr_recipient:"merchantattack@upi",
+
+        qr_amount:9000
+
+    }
+
+};
+
+
+/* =========================================
+   LOAD SCENARIO
+========================================= */
+
+function loadScenario(type,button){
+
+    const data = scenarios[type];
+
+    document.getElementById("user_id").value =
+        data.user_id;
+
+    document.getElementById("amount").value =
+        data.amount;
+
+    document.getElementById("recipient").value =
+        data.recipient;
+
+    document.getElementById("device").value =
+        data.device;
+
+    document.getElementById("location").value =
+        data.location;
+
+    document.getElementById("timestamp").value =
+        data.timestamp;
+
+    document.getElementById("message").value =
+        data.message;
+
+    document.getElementById("qr_recipient").value =
+        data.qr_recipient;
+
+    document.getElementById("qr_amount").value =
+        data.qr_amount;
+
+
+    document.querySelectorAll(".scenario")
+        .forEach(btn=>{
+            btn.classList.remove("active");
+        });
+
+    if(button){
+        button.classList.add("active");
+    }
+
+}
+
+
+/* =========================================
+   NUMBER ANIMATION
+========================================= */
+
+function animateNumber(
+    element,
+    target,
+    duration=900
+){
+
+    const start = Number(
+        element.textContent
+            .replace(/[^\d.-]/g,"")
+    ) || 0;
+
+    const startTime = performance.now();
+
+
+    function update(time){
+
+        const progress = Math.min(
+            (time-startTime)/duration,
+            1
+        );
+
+        const eased =
+            1-Math.pow(1-progress,3);
+
+        const value =
+            Math.round(
+                start+(target-start)*eased
+            );
+
+        element.textContent = value;
+
+        if(progress<1){
+            requestAnimationFrame(update);
+        }
+
+    }
+
+    requestAnimationFrame(update);
+
+}
+
+
+/* =========================================
+   SIGNAL
+========================================= */
+
+function setSignal(
+    id,
+    value,
+    active=false
+){
+
+    const card =
+        document.getElementById(id);
+
+    if(!card) return;
+
+    card.classList.toggle(
+        "active",
+        active
+    );
+
+    const valueElement =
+        card.querySelector(".signal-value");
+
+    if(valueElement){
+        valueElement.textContent =
+            value || "—";
+    }
+
+}
+
+
+/* =========================================
+   RISK VISUAL
+========================================= */
+
+function updateRiskVisual(score){
+
+    const ring =
+        document.getElementById("riskRing");
+
+    const degrees =
+        Math.min(score,100)*3.6;
+
+    let color = "#55ff9a";
+
+    if(score>=70){
+        color="#ff405d";
+    }
+    else if(score>=35){
+        color="#ffd166";
+    }
+    else if(score>0){
+        color="#ff2b8a";
+    }
+
+
+    ring.style.background =
+        `conic-gradient(
+            ${color} 0deg,
+            ${color} ${degrees}deg,
+            #161616 ${degrees}deg
+        )`;
+
+    ring.style.boxShadow =
+        `0 0 40px ${color}22`;
+
+}
+
+
+/* =========================================
+   TYPEWRITER
+========================================= */
+
+let typingTimer;
+
+
+function typeExplanation(text){
+
+    const element =
+        document.getElementById(
+            "explanationText"
+        );
+
+    clearInterval(typingTimer);
+
+    element.innerHTML =
+        '<span class="typing-cursor"></span>';
+
+    let index=0;
+
+    typingTimer=setInterval(()=>{
+
+        if(index>=text.length){
+
+            clearInterval(typingTimer);
+
+            return;
+
+        }
+
+        const current =
+            element.textContent || "";
+
+        element.textContent =
+            current.replace(
+                "█",
+                ""
+            ) + text[index];
+
+        index++;
+
+    },12);
+
+}
+
+
+/* =========================================
+   GRAPH ANIMATION
+========================================= */
+
+function animateGraph(){
+
+    const nodes =
+        document.querySelectorAll(
+            ".graph-node"
+        );
+
+    nodes.forEach((node,index)=>{
+
+        node.style.animationDelay =
+            `${index*.25}s`;
+
+    });
+
+}
+
+
+/* =========================================
+   ANALYZE
+========================================= */
+
+async function analyzeTransaction(){
+
+    const button =
+        document.getElementById(
+            "analyzeBtn"
+        );
+
+    button.textContent =
+        "SCANNING PAYMENT...";
+
+    button.disabled=true;
+
+
+    const payload={
+
+        user_id:
+            document.getElementById("user_id").value,
+
+        amount:
+            Number(
+                document.getElementById("amount").value
+            ),
+
+        recipient:
+            document.getElementById("recipient").value,
+
+        device:
+            document.getElementById("device").value,
+
+        location:
+            document.getElementById("location").value,
+
+        timestamp:
+            document.getElementById("timestamp").value,
+
+        message:
+            document.getElementById("message").value,
+
+        qr_recipient:
+            document.getElementById("qr_recipient").value,
+
+        qr_amount:
+            Number(
+                document.getElementById("qr_amount").value
+            )
+
+    };
+
+
+    try{
+
+        const response =
+            await fetch(
+                "http://127.0.0.1:8000/analyze",
+                {
+
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify(payload)
+
+                }
+            );
+
+
+        if(!response.ok){
+
+            throw new Error(
+                "Backend request failed"
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+        displayResults(data);
+
+
+    }catch(error){
+
+        console.error(error);
+
+        document.getElementById(
+            "riskLevel"
+        ).textContent="OFFLINE";
+
+        document.getElementById(
+            "riskAction"
+        ).textContent=
+            "Could not connect to the risk engine. Make sure FastAPI is running.";
+
+    }
+
+
+    button.disabled=false;
+
+    button.textContent =
+        "RUN THREAT SCAN →";
+
+}
+
+
+/* =========================================
+   DISPLAY RESULTS
+========================================= */
+
+function displayResults(data){
+
+    const risk =
+        data.risk || {};
+
+    const signals =
+        data.signals || {};
+
+    const explanation =
+        data.explanation || {};
+
+    const graph =
+        data.graph_risk || {};
+
+
+    const score =
+        Number(risk.score || 0);
+
+
+    /*
+       Backend versions may expose
+       behavioral risk directly.
+       If not, base_risk represents
+       the behavioral component.
+    */
+
+    const behavioralScore =
+        Number(
+            data.behavioral_risk?.score ??
+            explanation.base_risk ??
+            0
+        );
+
+
+    const graphScore =
+        Number(
+            graph.graph_risk_score || 0
+        );
+
+
+    const strongSignals =
+        Number(
+            explanation.strong_signal_count || 0
+        );
+
+
+    /* SCORE */
+
+    animateNumber(
+        document.getElementById(
+            "riskScore"
+        ),
+        score
+    );
+
+
+    updateRiskVisual(score);
+
+
+    /* LEVEL */
+
+    const level =
+        String(
+            risk.level || "UNKNOWN"
+        ).toUpperCase();
+
+
+    document.getElementById(
+        "riskLevel"
+    ).textContent=level;
+
+
+    document.getElementById(
+        "riskAction"
+    ).textContent =
+        risk.action ||
+        "No action recommended.";
+
+
+    /* METRICS */
+
+    animateNumber(
+        document.getElementById(
+            "behavioralRisk"
+        ),
+        behavioralScore
+    );
+
+
+    animateNumber(
+        document.getElementById(
+            "graphRisk"
+        ),
+        graphScore
+    );
+
+
+    animateNumber(
+        document.getElementById(
+            "strongSignals"
+        ),
+        strongSignals
+    );
+
+
+    /* SIGNALS */
+
+    const amount =
+        signals.amount || {};
+
+    const recipient =
+        signals.recipient || {};
+
+    const device =
+        signals.device || {};
+
+    const location =
+        signals.location || {};
+
+    const message =
+        signals.message || {};
+
+    const qr =
+        signals.qr || {};
+
+    const frequency =
+        signals.frequency || {};
+
+
+    setSignal(
+        "signalAmount",
+        amount.status ||
+            amount.label ||
+            "NORMAL",
+        Number(amount.risk || 0)>0
+    );
+
+
+    setSignal(
+        "signalRecipient",
+        recipient.status ||
+            recipient.label ||
+            "KNOWN",
+        Number(recipient.risk || 0)>0
+    );
+
+
+    setSignal(
+        "signalDevice",
+        device.status ||
+            device.label ||
+            "KNOWN",
+        Number(device.risk || 0)>0
+    );
+
+
+    setSignal(
+        "signalLocation",
+        location.status ||
+            location.label ||
+            "KNOWN",
+        Number(location.risk || 0)>0
+    );
+
+
+    setSignal(
+        "signalMessage",
+        message.status ||
+            message.label ||
+            "NORMAL",
+        Number(message.risk || 0)>0
+    );
+
+
+    setSignal(
+        "signalQR",
+        qr.status ||
+            qr.label ||
+            "MATCH",
+        Number(qr.risk || 0)>0
+    );
+
+
+    setSignal(
+        "signalFrequency",
+        frequency.status ||
+            frequency.label ||
+            "NORMAL",
+        Number(frequency.risk || 0)>0
+    );
+
+
+    /* EXPLANATION */
+
+    let explanationText =
+        data.user_message || "";
+
+
+    if(!explanationText){
+
+        explanationText =
+            `The transaction received a risk score of ${score}. ` +
+            `Behavioral analysis contributed ${behavioralScore} risk points ` +
+            `while the connected-account graph contributed ${graphScore}.`;
+
+    }
+
+
+    typeExplanation(
+        explanationText
+    );
+
+
+    animateGraph();
+
+}
+
+
+/* =========================================
+   INITIAL STATE
+========================================= */
+
+loadScenario("normal");
+
+animateGraph();
+
+</script>
+
+</body>
+</html>
